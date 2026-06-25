@@ -96,9 +96,13 @@ const grid=document.getElementById("grid");
 
 function render(app, rel){
   const assets=(rel&&rel.assets)||[];
-  const find=m=>{const a=assets.find(x=>x.name.toLowerCase().includes(m.toLowerCase()));return a?a.browser_download_url:null;};
-  const mac=find(app.macMatch), win=find(app.winMatch);
+  const find=m=>assets.find(x=>x.name.toLowerCase().includes(m.toLowerCase()))||null;
+  const macA=find(app.macMatch), winA=find(app.winMatch);
   const ver = rel ? (rel.name||rel.tag_name) : null;
+  // "updated" = newest asset upload time, so re-uploading a file (same release)
+  // visibly refreshes it. That is the real signal for "is this a fresh build".
+  const times=assets.map(a=>a.updated_at).filter(Boolean).sort();
+  const upd = times.length ? times[times.length-1] : (rel&&rel.published_at);
   const card=document.createElement("div");
   card.className="card";
   card.innerHTML=`
@@ -107,12 +111,12 @@ function render(app, rel){
       <div>
         <h2>${app.name}</h2>
         <p class="desc">${app.desc}</p>
-        <div class="ver">${ver?`Version <b>${ver}</b> &middot; updated ${ago(rel.published_at)}`:"No release yet"}</div>
+        <div class="ver">${ver?`Version <b>${ver}</b> &middot; files updated ${ago(upd)}`:"No release yet"}</div>
       </div>
     </div>
     <div class="dls">
-      ${btn("mac",macSVG,"Download for macOS",mac)}
-      ${btn("win",winSVG,"Download for Windows",win)}
+      ${btn("mac",macSVG,"Download for macOS",macA?macA.browser_download_url:null)}
+      ${btn("win",winSVG,"Download for Windows",winA?winA.browser_download_url:null)}
     </div>`;
   grid.appendChild(card);
 }
