@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab Apps</title>
+<style>
+  :root{
+    --bg:#0b0d10; --card:#15191e; --card2:#1b2026; --txt:#e9eef3; --muted:#9aa6b2;
+    --line:#262c33; --accent:#3a86ff; --accent2:#2dd4bf; --win:#7c8aa0;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f5f7fa; --card:#ffffff; --card2:#f0f3f7; --txt:#0d1b2a; --muted:#5b667a;
+           --line:#e3e8ef; --accent:#2563eb; --accent2:#0d9488; --win:#475569; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg);color:var(--txt);-webkit-font-smoothing:antialiased}
+  .wrap{max-width:920px;margin:0 auto;padding:56px 20px 80px}
+  header{text-align:center;margin-bottom:44px}
+  header h1{font-size:34px;margin:0 0 8px;letter-spacing:-.5px}
+  header p{color:var(--muted);margin:0;font-size:16px}
+  .grid{display:grid;gap:20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px 24px 22px;
+        display:flex;flex-direction:column;gap:14px}
+  .card-top{display:flex;align-items:flex-start;gap:16px}
+  .badge{flex:0 0 56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+         display:flex;align-items:center;justify-content:center;font-weight:700;font-size:22px;color:#fff}
+  .card h2{margin:0;font-size:20px}
+  .card .desc{color:var(--muted);margin:4px 0 0;font-size:14.5px}
+  .dls{display:flex;flex-wrap:wrap;gap:10px;margin-top:2px}
+  a.btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-weight:600;font-size:14px;
+        padding:10px 16px;border-radius:11px;border:1px solid var(--line);color:var(--txt);background:var(--card2);
+        transition:transform .06s ease, border-color .12s ease}
+  a.btn:hover{transform:translateY(-1px);border-color:var(--accent)}
+  a.btn.mac{background:var(--accent);border-color:var(--accent);color:#fff}
+  a.btn.win{color:var(--txt)}
+  a.btn svg{width:16px;height:16px}
+  .meta{font-size:12.5px;color:var(--muted)}
+  footer{text-align:center;color:var(--muted);font-size:13px;margin-top:48px}
+  footer a{color:var(--accent);text-decoration:none}
+  .note{font-size:12.5px;color:var(--muted);margin-top:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Lab Apps</h1>
+    <p>Desktop tools from the lab. Pick your platform and download.</p>
+  </header>
+  <div id="grid" class="grid"></div>
+  <footer>
+    macOS builds are signed and notarized. On Windows, if SmartScreen warns, click <b>More info → Run anyway</b>.<br>
+    Hosted on GitHub Pages.
+  </footer>
+</div>
+
+<script>
+/* ─────────────────────────────────────────────────────────────────────────
+   EDIT ONLY THIS BLOCK.
+   OWNER/REPO = the hub repo that holds the Releases (e.g. your account + "lab-apps").
+   For each app, "repo" is the repo whose Releases hold its binaries (can be the
+   hub repo itself if you attach everything there), and mac/win are the exact
+   asset filenames you upload to each Release.
+   The links use GitHub's /releases/latest/download/<file> URL, which always
+   points at the newest release — so you never touch this file again after setup.
+   ───────────────────────────────────────────────────────────────────────── */
+const OWNER = "YOUR_GITHUB_OWNER";   // e.g. "Single-Molecule-Genetics" or your username
+const HUB   = "lab-apps";            // the hub repo name
+
+const APPS = [
+  {
+    name: "DMV",
+    initials: "DMV",
+    desc: "Build the VarMatrix from MolA libraries and analyze it (filtering, coverage, spectra).",
+    repo: HUB,
+    mac: "DMV.dmg",
+    win: "DMV-windows.zip"
+  },
+  {
+    name: "RecombiScan",
+    initials: "RS",
+    desc: "Recombination scanning tool.",
+    repo: HUB,
+    mac: "RecombiScan.dmg",
+    win: "RecombiScan-windows.zip"
+  }
+  // add more apps here: { name, initials, desc, repo, mac, win }
+];
+
+function relURL(repo, file){
+  return `https://github.com/${OWNER}/${repo}/releases/latest/download/${file}`;
+}
+const macSVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.9c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.8-3.5.8-.7 0-1.8-.8-3-.8-1.5 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.2 0 2-1.1 2.8-2.2.9-1.3 1.2-2.5 1.2-2.6-.1 0-2.4-.9-2.4-3.7zM14.2 5.9c.6-.8 1.1-1.9 1-3-1 .1-2.1.7-2.8 1.5-.6.7-1.1 1.8-1 2.9 1.1.1 2.2-.6 2.8-1.4z"/></svg>';
+const winSVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.6l7.5-1v7.2H3V5.6zm0 12.8l7.5 1v-7.1H3v6.1zM11.3 4.4L21 3v8.6h-9.7V4.4zm0 8.4H21V21l-9.7-1.4v-6.8z"/></svg>';
+
+const grid = document.getElementById("grid");
+APPS.forEach(a=>{
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `
+    <div class="card-top">
+      <div class="badge">${a.initials}</div>
+      <div>
+        <h2>${a.name}</h2>
+        <p class="desc">${a.desc}</p>
+      </div>
+    </div>
+    <div class="dls">
+      ${a.mac ? `<a class="btn mac" href="${relURL(a.repo,a.mac)}">${macSVG} Download for macOS</a>` : ""}
+      ${a.win ? `<a class="btn win" href="${relURL(a.repo,a.win)}">${winSVG} Download for Windows</a>` : ""}
+    </div>
+    <div class="note">Always serves the latest release.</div>
+  `;
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>
